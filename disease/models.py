@@ -19,7 +19,7 @@ class MainSymptoms(models.Model):
 
     symptoms = models.CharField(verbose_name="症状", max_length=50, unique=False)
 
-    
+
 class MainPrescription(models.Model):
     """Model definition for MainPrescription."""
 
@@ -51,10 +51,22 @@ class Disease(models.Model):
         """Unicode representation of Disease."""
         return self.disease_name
 
-
     disease_name = models.CharField(verbose_name="疾病名称", max_length=50)
-    main_symptoms  = models.ManyToManyField(MainSymptoms, verbose_name='主要症状')
-    main_prescription  = models.ManyToManyField(MainPrescription, verbose_name='主药方', blank=True)
+    main_symptoms = models.ManyToManyField(MainSymptoms, verbose_name='主要症状')
+    main_prescription = models.ManyToManyField(MainPrescription, verbose_name='主药方', blank=True)
+
+    def get_compatibility(self, submitted):
+        """
+        Calculate the match with this based on the submitted parameters
+        The submitted likes [1,2,3] and the values with symptoms 'id
+        """
+        this_disease_symtoms = list(map(lambda x: x.id, self.main_symptoms.all()))
+
+        matched = list(set(submitted) & set(this_disease_symtoms))
+        # print logs
+        print(this_disease_symtoms, submitted, matched)
+
+        return len(matched) / len(this_disease_symtoms)
 
 
 class DiseaseType(models.Model):
@@ -69,7 +81,7 @@ class DiseaseType(models.Model):
     def __str__(self):
         """Unicode representation of DiseaseType."""
         return str(self.disease) + '/' + self.type_name
-    
+
     disease = models.ForeignKey(Disease, on_delete=models.CASCADE, verbose_name='疾病')
     type_name = models.CharField(verbose_name='分型名称', max_length=50)
     type_symptoms = models.CharField(verbose_name='分型症状', max_length=200)

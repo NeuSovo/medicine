@@ -6,7 +6,7 @@ from .models import *
 class DiseaseAdmin(admin.ModelAdmin):
     '''Admin View for '''
 
-    list_display = ('disease_name',)
+    list_display = ('id', 'disease_name',)
     filter_horizontal = ('main_symptoms', 'main_prescription')
     # list_filter = ('',)
     # inlines = [
@@ -16,7 +16,7 @@ class DiseaseAdmin(admin.ModelAdmin):
     # readonly_fields = ('',)
     # search_fields = ('',)
     # date_hierarchy = ''
-    # ordering = ('',)
+    ordering = ('id',)
 
 
 @admin.register(DiseaseType)
