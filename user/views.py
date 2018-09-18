@@ -26,6 +26,9 @@ class RegUserView(JsonResponseMixin, CreateView, UserWrap):
 class LoginUserView(JsonResponseMixin, View):
     model = User
 
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
+
     def post(self, request, *args, **kwargs):
         if not isinstance(request.wuser, self.model):
             return self.render_to_response({'msg': 'token 错误或过期'})
