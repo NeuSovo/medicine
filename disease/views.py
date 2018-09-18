@@ -11,6 +11,7 @@ class DiseaseView(JsonResponseMixin, View):
     
     def get(self, request, *args, **kwargs):
         # TODO: 规则
+        print (request.wuser)
         return self.render_to_response(Symptoms.objects.all())
 
     def post(self, request, *args, **kwargs):
