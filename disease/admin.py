@@ -27,5 +27,5 @@ class DiseaseTypeAdmin(admin.ModelAdmin):
 
     filter_horizontal = ('add_prescription',)
 
-admin.site.register(MainSymptoms)
-admin.site.register(MainPrescription)
+admin.site.register(Symptoms)
+admin.site.register(Prescription)
