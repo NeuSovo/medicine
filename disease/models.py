@@ -1,6 +1,15 @@
-from django.db import models
+import random
+import time
 
-# Create your models here.
+from django.db import models, transaction
+from django.utils import timezone
+
+try:
+    random = random.SystemRandom()
+    using_sysrandom = True
+except NotImplementedError:
+    using_sysrandom = False
+
 
 class Symptoms(models.Model):
     """Model definition for Symptoms."""
@@ -69,20 +78,96 @@ class Disease(models.Model):
         return len(matched) / len(this_disease_symtoms)
 
 
-class DiseaseType(models.Model):
-    """Model definition for DiseaseType."""
+class DiseaseTyping(models.Model):
+    """Model definition for DiseaseTyping."""
 
     class Meta:
-        """Meta definition for DiseaseType."""
+        """Meta definition for DiseaseTyping."""
 
         verbose_name = '疾病分型'
         verbose_name_plural = '疾病分型'
 
     def __str__(self):
-        """Unicode representation of DiseaseType."""
+        """Unicode representation of DiseaseTyping."""
         return str(self.disease) + '/' + self.type_name
 
     disease = models.ForeignKey(Disease, on_delete=models.CASCADE, verbose_name='疾病')
     type_name = models.CharField(verbose_name='分型名称', max_length=50)
     type_symptoms = models.CharField(verbose_name='分型症状', max_length=200)
     add_prescription = models.ManyToManyField(Prescription, verbose_name='处方加减')
+
+
+class Case(models.Model):
+    """Model definition for Case."""
+
+    class Meta:
+        """Meta definition for Case."""
+
+        verbose_name = 'Case'
+        verbose_name_plural = 'Cases'
+
+    def __str__(self):
+        """Unicode representation of Case."""
+        return str(self.case_id)
+
+    def gen_case_id(self):
+        return timezone.now().strftime("%Y%m%d") + str(round(time.time() * 1000)) [-4:] + \
+                str(random.randint(1000,9999))
+
+    def save(self, *args, **kwargs):
+        if not self.case_id:
+            self.case_id = self.gen_case_id()
+        return super().save(*args, **kwargs)
+
+    @staticmethod
+    def create(create_user, case_disease, symptoms):
+        try:
+            with transaction.atomic():
+                case = Case.objects.create(create_user=create_user, case_disease=case_disease)
+                for i in symptoms:
+                    case.casesymptoms_set.create(symptoms_id=i)
+        except Exception as e:
+            print (str(e) + ' line 130')
+            return str(e)
+
+        return case
+
+    case_id = models.BigIntegerField(primary_key=True)
+    create_user = models.IntegerField(null=False)
+
+    case_disease = models.ForeignKey(Disease, on_delete=models.CASCADE)
+    create_time = models.DateTimeField(auto_now_add=True)
+
+
+class CaseSymptoms(models.Model):
+    """Model definition for CaseSymptoms."""
+
+    class Meta:
+        """Meta definition for CaseSymptoms."""
+
+        verbose_name = 'CaseSymptoms'
+        verbose_name_plural = 'CaseSymptomss'
+
+    def __str__(self):
+        """Unicode representation of CaseSymptoms."""
+        return str(self.case_id) + str(self.symptoms)
+
+    case = models.ForeignKey(Case, on_delete=models.CASCADE)
+    symptoms = models.ForeignKey(Symptoms, on_delete=models.SET_NULL, null=True)
+
+
+class CaseTyping(models.Model):
+    """Model definition for CaseTyping."""
+
+    class Meta:
+        """Meta definition for CaseTyping."""
+
+        verbose_name = 'CaseTyping'
+        verbose_name_plural = 'CaseTypings'
+
+    def __str__(self):
+        """Unicode representation of CaseTyping."""
+        return str(self.case_id) + str(self.typing)
+
+    case = models.ForeignKey(Case, on_delete=models.CASCADE)
+    typing = models.ForeignKey(DiseaseTyping, on_delete=models.SET_NULL, null=True)

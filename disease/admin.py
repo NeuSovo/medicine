@@ -19,7 +19,7 @@ class DiseaseAdmin(admin.ModelAdmin):
     ordering = ('id',)
 
 
-@admin.register(DiseaseType)
+@admin.register(DiseaseTyping)
 class DiseaseTypeAdmin(admin.ModelAdmin):
     '''Admin View for DiseaseType'''
 
