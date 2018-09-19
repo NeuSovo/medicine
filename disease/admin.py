@@ -27,5 +27,23 @@ class DiseaseTypeAdmin(admin.ModelAdmin):
 
     filter_horizontal = ('add_prescription',)
 
+@admin.register(Case)
+class CaseAdmin(admin.ModelAdmin):
+    '''Admin View for Case'''
+
+    list_display = ('case_id', 'create_time', 'create_user', 'case_disease')
+    # list_filter = ('',)
+    # inlines = [
+    #     Inline,
+    # ]
+    # raw_id_fields = ('',)
+    # readonly_fields = ('',)
+    # search_fields = ('',)
+    # date_hierarchy = ''
+    # ordering = ('',)
+
+    ordering = ('-create_time',)
+
+
 admin.site.register(Symptoms)
 admin.site.register(Prescription)

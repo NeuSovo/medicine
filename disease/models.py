@@ -7,6 +7,7 @@ from django.utils import timezone
 try:
     random = random.SystemRandom()
     using_sysrandom = True
+    from user.models import User
 except NotImplementedError:
     using_sysrandom = False
 
@@ -132,8 +133,25 @@ class Case(models.Model):
 
         return case
 
+    def create_typing(self, typings):
+        try:
+            with transaction.atomic():
+                for i in DiseaseTyping.objects.filter(id__in=typings):
+                    self.casetyping_set.create(typing=i)
+        except Exception as e:
+            print (str(e) + ' line 142')
+            return str(e)
+
+
+    def get_result(self):
+        info = dict()
+        info['main_symptoms'] = self.case_disease.main_prescription.all()
+        info['typings'] = self.casetyping_set.all()
+
+        return info
+
     case_id = models.BigIntegerField(primary_key=True)
-    create_user = models.IntegerField(null=False)
+    create_user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     case_disease = models.ForeignKey(Disease, on_delete=models.CASCADE)
     create_time = models.DateTimeField(auto_now_add=True)
@@ -147,6 +165,7 @@ class CaseSymptoms(models.Model):
 
         verbose_name = 'CaseSymptoms'
         verbose_name_plural = 'CaseSymptomss'
+        unique_together = ('case', 'symptoms')
 
     def __str__(self):
         """Unicode representation of CaseSymptoms."""
@@ -164,6 +183,7 @@ class CaseTyping(models.Model):
 
         verbose_name = 'CaseTyping'
         verbose_name_plural = 'CaseTypings'
+        unique_together = ('case', 'typing')
 
     def __str__(self):
         """Unicode representation of CaseTyping."""

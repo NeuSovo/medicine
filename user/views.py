@@ -1,8 +1,10 @@
-from django.views.generic import CreateView, View
-from dss.Mixin import JsonResponseMixin
-
+from django.views.generic import CreateView, ListView, DetailView, View
+from dss.Mixin import JsonResponseMixin, MultipleJsonResponseMixin
+from dss.Mixin import serializer
 from .models import *
 from .auth import UserWrap
+
+from disease.models import Case
 
 
 class RegUserView(JsonResponseMixin, CreateView, UserWrap):
@@ -34,3 +36,39 @@ class LoginUserView(JsonResponseMixin, View):
             return self.render_to_response({'msg': 'token 错误或过期'})
 
         return self.render_to_response({'msg': 'success', 'user_obj': request.wuser})
+
+
+
+class UserCaseListView(MultipleJsonResponseMixin, ListView):
+    model = Case
+    paginate_by = 15
+    foreign = True
+    datetime_format = 'string'
+
+    def get_queryset(self):
+        queryset = super(UserCaseListView, self).get_queryset()
+
+        qr = queryset.filter(create_user=self.request.wuser)
+
+        return qr
+
+
+class UserCaseDetailView(JsonResponseMixin, DetailView):
+    model = Case
+    foreign = True
+
+    many = True
+    datetime_type = 'string'
+    pk_url_kwarg = 'case_id'
+    exclude_attr = ('main_symptoms', 'main_prescription')
+    datetime_format = 'string'
+    
+    def get_context_data(self, **kwargs):
+        context = super(UserCaseDetailView, self).get_context_data(**kwargs)
+        context['result'] = serializer(context['case'].get_result(),
+                 exclude_attr=('case', 'disease', 'case_id'))
+        return context
+    
+
+
+
