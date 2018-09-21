@@ -72,7 +72,7 @@ class UserWrap:
 
     def gen_token(self, user):
         token = get_random_string(64)
-        wxapp_redis.set(':'.join(['wxapp', 'token', token]), user.openid, ex=TOKEN_EXPIRE_HOUR * 3600)
+        medicine_redis.set(':'.join(['medicine', 'token', token]), user.openid, ex=TOKEN_EXPIRE_HOUR * 3600)
         return token
 
     def update_profile(self):
@@ -92,8 +92,8 @@ class CheckUserWrap:
     def get_user_by_token(self):
         self.get_current_token()
         openid = user = None
-        if wxapp_redis.exists(':'.join(['wxapp', 'token', self.token])):
-            openid = wxapp_redis.get(':'.join(['wxapp', 'token', self.token])).decode('utf-8')
+        if medicine_redis.exists(':'.join(['medicine', 'token', self.token])):
+            openid = medicine_redis.get(':'.join(['medicine', 'token', self.token])).decode('utf-8')
         if openid:
             try:
                 user = User.objects.get(openid=str(openid))
@@ -107,3 +107,7 @@ class WechatUserAuthMiddleware(MiddlewareMixin, CheckUserWrap):
     def process_view(self ,request, fnc , arg ,kwarg):
         self.request = request
         setattr(request, 'wuser', self.get_user_by_token())
+
+
+def login_required():
+    pass

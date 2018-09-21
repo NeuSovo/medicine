@@ -13,7 +13,7 @@ try:
 except NotImplementedError:
     using_sysrandom = False
 
-wxapp_redis = redis.StrictRedis(host='127.0.0.1', port=6379, db=0)
+medicine_redis = redis.StrictRedis(host='127.0.0.1', port=6379, db=0)
 TOKEN_EXPIRE_HOUR = 72
 
 
@@ -56,7 +56,7 @@ def request_jscode(params):
 def is_action_allowed(user_id, action_key, period, max_count):
     key = 'hist:%s:%s' % (user_id, action_key)
     now_ts = int(time.time() * 1000)  # 毫秒时间戳
-    with wxapp_redis.pipeline() as pipe:  # client 是 StrictRedis 实例
+    with medicine_redis.pipeline() as pipe:  # client 是 StrictRedis 实例
         # 记录行为
         pipe.zadd(key, now_ts, now_ts)  # value 和 score 都使用毫秒时间戳
         # 移除时间窗口之前的行为记录，剩下的都是时间窗口内的
