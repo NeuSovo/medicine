@@ -1,0 +1,28 @@
+version: '2.1'
+
+services:
+  web:
+    image: medicine
+    build: .
+    networks:
+      - medicine_network
+  db:
+    image: redis
+    
+  nginx:
+    image: nginx
+    restart: always
+    container_name : medicine_nginx
+    volumes:
+      - ./conf/nginx/:/etc/nginx/conf.d
+    ports:
+      - 8002:80
+    networks:
+      - medicine_network
+    depends_on:
+      - web
+
+
+networks:
+  medicine_network:
+    

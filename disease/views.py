@@ -1,5 +1,5 @@
 import json
-from user.models import User
+from user.auth import login_required
 
 from django.shortcuts import get_object_or_404
 from django.views.generic import CreateView, ListView, View
@@ -13,6 +13,7 @@ from .models import *
 class DiseaseView(JsonResponseMixin, View):
     model = Disease
     
+    @login_required
     def get(self, request, *args, **kwargs):
         # TODO: rules
         print (request.wuser)

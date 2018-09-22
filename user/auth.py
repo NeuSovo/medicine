@@ -2,7 +2,7 @@ import json
 
 from django.conf import settings
 from django.utils.deprecation import MiddlewareMixin
-
+from django.core.handlers.wsgi import WSGIRequest
 from .models import User
 from .tools import *
 
@@ -109,5 +109,10 @@ class WechatUserAuthMiddleware(MiddlewareMixin, CheckUserWrap):
         setattr(request, 'wuser', self.get_user_by_token())
 
 
-def login_required():
-    pass
+def login_required(func):
+    def wrapper(*args, **kw):
+        requests = args[1]
+        if isinstance(requests, WSGIRequest):
+            pass
+        return func(*args, **kw)
+    return wrapper
