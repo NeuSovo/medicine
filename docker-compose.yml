@@ -1,20 +1,35 @@
 version: '2.1'
 
 services:
+  redis_db:
+    image: redis
+    container_name: medicine_redis
+    command: ["redis-server", "--appendonly", "yes"]
+    expose:
+      - "3306"
+    volumes:
+      - redis-data:/data
+    networks:
+      - medicine_network
+
   web:
+    container_name: medicine_web
     image: medicine
     build: .
     networks:
       - medicine_network
-  db:
-    image: redis
+    volumes:
+      - django-static:/app/static
+    depends_on:
+      - redis_db
     
   nginx:
     image: nginx
     restart: always
-    container_name : medicine_nginx
+    container_name: medicine_nginx
     volumes:
       - ./conf/nginx/:/etc/nginx/conf.d
+      - django-static:/app/static
     ports:
       - 8002:80
     networks:
@@ -25,4 +40,8 @@ services:
 
 networks:
   medicine_network:
+
+volumes:
+  redis-data:
+  django-static:
     
