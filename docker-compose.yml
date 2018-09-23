@@ -15,11 +15,12 @@ services:
   web:
     container_name: medicine_web
     image: medicine
-    build: .
     networks:
       - medicine_network
     volumes:
+      - .:/app
       - django-static:/app/static
+    build: .
     depends_on:
       - redis_db
     

@@ -14,9 +14,10 @@ WORKDIR /app
 ADD . /app
 
 # Using pip:
+# COPY sources.list /etc/apt/sources.list
 
 RUN apt-get update -qq && \
-    apt-get install -y git gcc g++ make && \
+    apt-get install -y git gcc g++ make &&\
     python3 -m pip install -r requirements.txt && \
     python3 manage.py collectstatic --no-input && \
     python3 manage.py makemigrations && \
