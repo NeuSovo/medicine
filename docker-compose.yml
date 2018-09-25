@@ -18,8 +18,9 @@ services:
     networks:
       - medicine_network
     volumes:
-      - .:/app
-      - django-static:/app/static
+      - .:/medicine
+      - django-static:/medicine/static
+    command: ./conf/sh/web.sh
     build: .
     depends_on:
       - redis_db
@@ -30,14 +31,13 @@ services:
     container_name: medicine_nginx
     volumes:
       - ./conf/nginx/:/etc/nginx/conf.d
-      - django-static:/app/static
+      - django-static:/medicine/static
     ports:
       - 8002:80
     networks:
       - medicine_network
     depends_on:
       - web
-
 
 networks:
   medicine_network:

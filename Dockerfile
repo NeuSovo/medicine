@@ -10,24 +10,24 @@ FROM python:3.6-slim-stretch
 
 LABEL Name=medicine Version=0.0.1
 
-WORKDIR /app
-ADD . /app
+WORKDIR /medicine
+ADD . /medicine
 
 # Using pip:
 # COPY sources.list /etc/apt/sources.list
 
 RUN apt-get update -qq && \
-    apt-get install -y git gcc g++ make &&\
-    python3 -m pip install -r requirements.txt && \
-    python3 manage.py collectstatic --no-input && \
-    python3 manage.py makemigrations && \
-    python3 manage.py migrate user && \
-    python3 manage.py migrate disease && \
-    python3 manage.py migrate
+    apt-get install -qq -y --no-install-recommends \
+        git gcc g++ make default-libmysqlclient-dev && \
+    apt-get autoremove -qq -y --purge && \
+    rm -rf /var/cache/apt /var/lib/apt/lists
 
-EXPOSE 8001
+RUN pip install --no-cache-dir -r requirements.txt -i http://mirrors.cloud.tencent.com/pypi/simple --trusted-host mirrors.cloud.tencent.com&& \
+    python3 manage.py collectstatic --no-input
 
-CMD ["uwsgi", "uwsgi.ini"]
+RUN adduser --disabled-password --gecos '' appuser
+
+EXPOSE 8000
 
 # Using pipenv:
 #RUN python3 -m pip install pipenv
