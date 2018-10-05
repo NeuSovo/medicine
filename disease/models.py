@@ -68,7 +68,7 @@ class Disease(models.Model):
     def get_compatibility(self, submitted):
         """
         Calculate the match with this based on the submitted parameters
-        The submitted likes [1,2,3] and the values with symptoms 'id
+        The submitted likes [1,2,3] and the values with symptom 's id
         """
         this_disease_symtoms = list(map(lambda x: x.id, self.main_symptoms.all()))
 
@@ -94,8 +94,23 @@ class DiseaseTyping(models.Model):
 
     disease = models.ForeignKey(Disease, on_delete=models.CASCADE, verbose_name='疾病')
     type_name = models.CharField(verbose_name='分型名称', max_length=50)
-    type_symptoms = models.CharField(verbose_name='分型症状', max_length=200)
     add_prescription = models.ManyToManyField(Prescription, verbose_name='处方加减')
+
+
+class DiseaseTypingSymptoms(models.Model):
+
+    class Meta:
+        """分型的主要症状"""
+
+        verbose_name = 'DiseaseTypingSymptoms'
+        verbose_name_plural = 'DiseaseTypingSymptomss'
+
+    def __str__(self):
+        """Unicode representation of DiseaseTypingSymptoms."""
+        pass
+
+    symptoms_name = models.CharField(verbose_name='分型症状名字', max_length=30)
+    symptoms_typing = models.ForeignKey(DiseaseTyping, on_delete=models.CASCADE, verbose_name='分型')
 
 
 class Case(models.Model):
@@ -186,7 +201,6 @@ class CaseTyping(models.Model):
         unique_together = ('case', 'typing')
 
     def __str__(self):
-        """Unicode representation of CaseTyping."""
         return str(self.case_id) + str(self.typing)
 
     case = models.ForeignKey(Case, on_delete=models.CASCADE)

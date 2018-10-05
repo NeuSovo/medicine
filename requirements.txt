@@ -3,5 +3,5 @@ requests
 redis
 tenacity
 git+https://github.com/zxh326/django-simple-serializer.git
-uwsgi
-gevent
+# uwsgi
+# gevent

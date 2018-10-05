@@ -1,6 +1,7 @@
 import json
 
 from django.conf import settings
+from django.http import JsonResponse
 from django.utils.deprecation import MiddlewareMixin
 from django.core.handlers.wsgi import WSGIRequest
 from .models import User
@@ -111,8 +112,10 @@ class WechatUserAuthMiddleware(MiddlewareMixin, CheckUserWrap):
 
 def login_required(func):
     def wrapper(*args, **kw):
-        requests = args[1]
-        if isinstance(requests, WSGIRequest):
-            pass
+        request = args[1]
+        if isinstance(request, WSGIRequest):
+            if not isinstance(request.wuser, User):
+                return JsonResponse({'msg': 'token 错误或过期'})
+            return JsonResponse({"msg": '未知error'})
         return func(*args, **kw)
     return wrapper

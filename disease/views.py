@@ -12,11 +12,10 @@ from .models import *
 
 class DiseaseView(JsonResponseMixin, View):
     model = Disease
-    
-    @login_required
+
     def get(self, request, *args, **kwargs):
         # TODO: rules
-        print (request.wuser)
+        print(request.wuser)
         return self.render_to_response(Symptoms.objects.all())
 
     def post(self, request, *args, **kwargs):
@@ -31,10 +30,12 @@ class DiseaseView(JsonResponseMixin, View):
             matched = i.get_compatibility(symptoms)
             if matched > 0:
                 # 可取列表里只有一个的优化
-                if matched >=  CAN_SUBMIT_LIMIT: can_submit = True
+                if matched >= CAN_SUBMIT_LIMIT:
+                    can_submit = True
                 next_symptoms = next_symptoms.union(i.main_symptoms.all())
 
-        next_symptoms = next_symptoms.difference(Symptoms.objects.filter(id__in=symptoms))
+        next_symptoms = next_symptoms.difference(
+            Symptoms.objects.filter(id__in=symptoms))
 
         return self.render_to_response({'can_submit': can_submit, 'next_symptoms': next_symptoms})
 
@@ -42,10 +43,8 @@ class DiseaseView(JsonResponseMixin, View):
 class DiseaseSubmit(JsonResponseMixin, View):
     model = Case
 
+    @login_required
     def post(self, request, *args, **kwargs):
-        if not isinstance(request.wuser, User):
-            return self.render_to_response({'msg': 'token 错误或过期'})
-        
         try:
             symptoms = json.loads(request.body)['symptoms']
         except Exception as e:
@@ -53,6 +52,7 @@ class DiseaseSubmit(JsonResponseMixin, View):
 
         max_disease = Disease()
         max_matched = 0
+
         # TODO: fixed result based on lens
         for i in Disease.objects.all().iterator():
             matched = i.get_compatibility(symptoms)
@@ -60,24 +60,24 @@ class DiseaseSubmit(JsonResponseMixin, View):
                 max_disease = i
                 max_matched = matched
 
-        case = self.model.create(create_user=request.wuser, case_disease=max_disease, symptoms=symptoms)
+        case = self.model.create(  
+            create_user=request.wuser, case_disease=max_disease, symptoms=symptoms)
 
-        if not (isinstance(case, self.model)):
+        if not isinstance(case, self.model):
             return self.render_to_response({'msg': case})
-        
-        typing = serializer(max_disease.diseasetyping_set.all(), exclude_attr=('disease',))
 
-        return self.render_to_response({'matched': max_matched, 'case': case, 
-                        'typing': typing})
+        typing = serializer(
+            max_disease.diseasetyping_set.all(), exclude_attr=('disease',))
+
+        return self.render_to_response({'matched': max_matched, 'case': case,
+                                        'typing': typing})
 
 
 class DiseaseResultView(JsonResponseMixin, View):
     model = Case
-    
-    def post(self, request, *args, **kwargs):
-        if not isinstance(request.wuser, User):
-            return self.render_to_response({'msg': 'token 错误或过期'})
 
+    @login_required
+    def post(self, request, *args, **kwargs):
         try:
             body = json.loads(request.body)
         except Exception as e:
@@ -86,7 +86,7 @@ class DiseaseResultView(JsonResponseMixin, View):
         case = get_object_or_404(self.model, pk=body.get('case_id'))
         if case.create_user != request.wuser:
             return self.render_to_response({'msg': 'case_id 错误'})
-        
+
         typings = body.get('typing')
 
         # 是不是没有分型
