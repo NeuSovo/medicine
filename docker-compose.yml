@@ -14,7 +14,7 @@ services:
 
   web:
     container_name: medicine_web
-    image: medicine
+    image: zzde/medicine
     networks:
       - medicine_network
     volumes:
