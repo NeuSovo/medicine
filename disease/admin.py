@@ -2,9 +2,6 @@ from django.contrib import admin
 
 from .models import *
 
-class DiseaseTypingSymptomsInline(admin.TabularInline):
-    model = DiseaseTypingSymptoms
-
 
 @admin.register(Disease)
 class DiseaseAdmin(admin.ModelAdmin):
@@ -21,12 +18,7 @@ class DiseaseTypeAdmin(admin.ModelAdmin):
 
     list_display = ('disease' ,'type_name',)
 
-    filter_horizontal = ('add_prescription',)
-
-    inlines = [
-        DiseaseTypingSymptomsInline,
-    ]
-
+    filter_horizontal = ('typing_symptoms', 'add_prescription',)
 
 @admin.register(Case)
 class CaseAdmin(admin.ModelAdmin):
@@ -47,4 +39,5 @@ class CaseAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Symptoms)
+admin.site.register(DiseaseTypingSymptoms)
 admin.site.register(Prescription)

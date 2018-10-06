@@ -15,3 +15,10 @@ class User(models.Model):
     avatar_url = models.URLField(null=True, blank=True)
     reg_date = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now=True)
+
+
+    def login(self):
+        # TODO: do something
+        return self.save()
+
+

@@ -42,6 +42,7 @@ class DiseaseView(JsonResponseMixin, View):
 
 class DiseaseSubmit(JsonResponseMixin, View):
     model = Case
+    model2 = DiseaseTypingSymptoms
 
     @login_required
     def post(self, request, *args, **kwargs):
@@ -66,11 +67,12 @@ class DiseaseSubmit(JsonResponseMixin, View):
         if not isinstance(case, self.model):
             return self.render_to_response({'msg': case})
 
-        typing = serializer(
-            max_disease.diseasetyping_set.all(), exclude_attr=('disease',))
+        typing_symptoms = self.model2.objects.none()
+        for i in max_disease.diseasetyping_set.all():
+            typing_symptoms = typing_symptoms.union(i.typing_symptoms.all())
 
-        return self.render_to_response({'matched': max_matched, 'case': case,
-                                        'typing': typing})
+        return self.render_to_response({'matched': max_matched, 'case': serializer(case, exclude_attr=('create_user')),
+                                        'typing': typing_symptoms})
 
 
 class DiseaseResultView(JsonResponseMixin, View):
@@ -89,7 +91,7 @@ class DiseaseResultView(JsonResponseMixin, View):
 
         typings = body.get('typing')
 
-        # 是不是没有分型
+        # TODO: 是不是没有分型
         if not isinstance(typings, list):
             return self.render_to_response({'msg': 'error'})
 

@@ -23,5 +23,3 @@ class Comment(models.Model):
     from_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comment_from')
     to_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comment_to')
     comment_time = models.DateTimeField(auto_now_add=True)
-
-

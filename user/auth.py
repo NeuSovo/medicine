@@ -116,6 +116,9 @@ def login_required(func):
         if isinstance(request, WSGIRequest):
             if not isinstance(request.wuser, User):
                 return JsonResponse({'msg': 'token 错误或过期'})
+            else:
+                pass
+        else:
             return JsonResponse({"msg": '未知error'})
         return func(*args, **kw)
     return wrapper

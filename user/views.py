@@ -2,7 +2,7 @@ from django.views.generic import CreateView, ListView, DetailView, View
 from dss.Mixin import JsonResponseMixin, MultipleJsonResponseMixin
 from dss.Mixin import serializer
 from .models import *
-from .auth import UserWrap
+from .auth import UserWrap, login_required
 
 from disease.models import Case
 
@@ -31,10 +31,9 @@ class LoginUserView(JsonResponseMixin, View):
     def get(self, request, *args, **kwargs):
         return self.post(request, *args, **kwargs)
 
+    @login_required
     def post(self, request, *args, **kwargs):
-        if not isinstance(request.wuser, self.model):
-            return self.render_to_response({'msg': 'token 错误或过期'})
-
+        request.wuser.login()
         return self.render_to_response({'msg': 'success', 'user_obj': request.wuser})
 
 

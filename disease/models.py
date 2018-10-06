@@ -78,6 +78,20 @@ class Disease(models.Model):
 
         return len(matched) / len(this_disease_symtoms)
 
+class DiseaseTypingSymptoms(models.Model):
+
+    class Meta:
+        """分型的主要症状"""
+
+        verbose_name = 'DiseaseTypingSymptoms'
+        verbose_name_plural = 'DiseaseTypingSymptomss'
+
+    def __str__(self):
+        """Unicode representation of DiseaseTypingSymptoms."""
+        return self.symptoms_name
+
+    symptoms_name = models.CharField(verbose_name='分型症状名字', max_length=30)
+
 
 class DiseaseTyping(models.Model):
     """Model definition for DiseaseTyping."""
@@ -95,22 +109,7 @@ class DiseaseTyping(models.Model):
     disease = models.ForeignKey(Disease, on_delete=models.CASCADE, verbose_name='疾病')
     type_name = models.CharField(verbose_name='分型名称', max_length=50)
     add_prescription = models.ManyToManyField(Prescription, verbose_name='处方加减')
-
-
-class DiseaseTypingSymptoms(models.Model):
-
-    class Meta:
-        """分型的主要症状"""
-
-        verbose_name = 'DiseaseTypingSymptoms'
-        verbose_name_plural = 'DiseaseTypingSymptomss'
-
-    def __str__(self):
-        """Unicode representation of DiseaseTypingSymptoms."""
-        return self.symptoms_name
-
-    symptoms_name = models.CharField(verbose_name='分型症状名字', max_length=30)
-    symptoms_typing = models.ForeignKey(DiseaseTyping, on_delete=models.CASCADE, verbose_name='分型')
+    typing_symptoms = models.ManyToManyField(DiseaseTypingSymptoms, verbose_name='分型症状', help_text='test', blank=True)
 
 
 class Case(models.Model):
@@ -151,17 +150,24 @@ class Case(models.Model):
     def create_typing(self, typings):
         try:
             with transaction.atomic():
-                for i in DiseaseTyping.objects.filter(id__in=typings):
-                    self.casetyping_set.create(typing=i)
+                # for i in DiseaseTypingSymptoms.objects.filter(id__in=typings):
+                #     # self.casetyping_set.create(typing=i)
+                #     if self.casetyping_set.filter(i.)
+                for i in self.case_disease.diseasetyping_set.all():
+                    if i.typing_symptoms.filter(id__in=typings).exists():
+                        self.casetyping_set.create(typing=i)
         except Exception as e:
-            print (str(e) + ' line 142')
+            print(str(e) + ' line 142')
             return str(e)
-
 
     def get_result(self):
         info = dict()
-        info['main_symptoms'] = self.case_disease.main_prescription.all()
-        info['typings'] = self.casetyping_set.all()
+        # 主方/
+        info['main_prescription'] = [i.prescription for i in self.case_disease.main_prescription.all()]
+        # 
+        info['typings'] = [{'typing_name': i.typing.type_name, 'prescription': [j.prescription
+                            for j in i.typing.add_prescription.all()]}
+                            for i in self.casetyping_set.all()]
 
         return info
 

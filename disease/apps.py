@@ -5,4 +5,4 @@ class DiseaseConfig(AppConfig):
     name = 'disease'
 
 
-CAN_SUBMIT_LIMIT = 0.7
+CAN_SUBMIT_LIMIT = 0.5
