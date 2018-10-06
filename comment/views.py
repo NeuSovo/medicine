@@ -9,12 +9,15 @@ from .models import Comment
 from disease.models import Disease
 from user.models import User
 
+
 class CommentView(JsonResponseMixin, View):
     model = Comment
 
+    exclude_attr = ('openid', 'reg_date', 'last_login', 'topic')
+
     def get(self, request, *args, **kwargs):
         disease = get_object_or_404(Disease, pk=kwargs.get('disease_id', 0))
-
+        return self.render_to_response(disease.comment_set.all().order_by("comment_time"))
 
     @login_required
     def post(self, request, *args, **kwargs):
@@ -23,9 +26,18 @@ class CommentView(JsonResponseMixin, View):
         try:
             body = json.loads(request.body)
         except Exception as e:
-            return self.render_to_response({'msg': 'error'})
+            return self.render_to_response({'msg': str(e)})
 
+        to_user = None
         if body.get('is_reply'):
-            to_user = get_object_or_404(User, pk=body.get('to_user'))
+            to_user = get_object_or_404(User, pk=body.get('to_user_id', 0))
 
-        self.model.create(topic=disease, )
+        # TODO: to detail this content
+        content = body.get('content')
+        try:
+            self.model.objects.create(topic=disease, content=content, from_user=request.wuser, to_user=to_user)
+        except Exception as e:
+            print(e)
+            return self.render_to_response({'msg': str(e)})
+
+        return self.render_to_response({'msg': 'ok'})

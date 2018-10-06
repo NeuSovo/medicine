@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class User(models.Model):
 
     class Meta:
@@ -20,5 +21,3 @@ class User(models.Model):
     def login(self):
         # TODO: do something
         return self.save()
-
-

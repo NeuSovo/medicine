@@ -21,5 +21,5 @@ class Comment(models.Model):
     topic = models.ForeignKey(Disease, on_delete=models.CASCADE)
     content = models.TextField()
     from_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comment_from')
-    to_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comment_to')
+    to_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comment_to', null=True, blank=True)
     comment_time = models.DateTimeField(auto_now_add=True)

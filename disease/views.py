@@ -99,3 +99,16 @@ class DiseaseResultView(JsonResponseMixin, View):
 
         result = case.get_result()
         return self.render_to_response({'case': case, 'result': result})
+
+
+class DoFavView(JsonResponseMixin, View):
+    model = FavList
+
+    def post(self, request, *args, **kwargs):
+        case = get_object_or_404(self.model, pk=kwargs.get('case_id'))
+        try:
+            self.model.objects.create(fa_case=case, fa_user=request.wuser)
+        except Exception as e:
+            return self.render_to_response({'msg': 'error'})
+
+        return self.render_to_response({'msg': 'ok'})

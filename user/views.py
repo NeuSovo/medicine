@@ -4,7 +4,7 @@ from dss.Mixin import serializer
 from .models import *
 from .auth import UserWrap, login_required
 
-from disease.models import Case
+from disease.models import Case, FavList
 
 
 class RegUserView(JsonResponseMixin, CreateView, UserWrap):
@@ -69,5 +69,15 @@ class UserCaseDetailView(JsonResponseMixin, DetailView):
         return context
     
 
+class UserFavListView(MultipleJsonResponseMixin, ListView):
+    model = FavList
+    paginate_by = 15
+    foreign = True
+    datetime_format = 'string'
 
+    def get_queryset(self):
+        queryset = super(UserFavListView, self).get_queryset()
 
+        qr = queryset.filter(fa_user=self.request.wuser)
+
+        return qr

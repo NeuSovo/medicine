@@ -166,8 +166,7 @@ class Case(models.Model):
         info['main_prescription'] = [i.prescription for i in self.case_disease.main_prescription.all()]
         # 
         info['typings'] = [{'typing_name': i.typing.type_name, 'prescription': [j.prescription
-                            for j in i.typing.add_prescription.all()]}
-                            for i in self.casetyping_set.all()]
+                            for j in i.typing.add_prescription.all()]} for i in self.casetyping_set.all()]
 
         return info
 
@@ -211,3 +210,13 @@ class CaseTyping(models.Model):
 
     case = models.ForeignKey(Case, on_delete=models.CASCADE)
     typing = models.ForeignKey(DiseaseTyping, on_delete=models.SET_NULL, null=True)
+
+
+class FavList(models.Model):
+
+    class Meta:
+        verbose_name = "FavList"
+        verbose_name_plural = "FavList"
+
+    fa_case = models.ForeignKey(Case, on_delete=models.CASCADE)
+    fa_user = models.ForeignKey(User, on_delete=models.CASCADE)
