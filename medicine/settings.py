@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'disease',
-    'user'
+    'user',
+    'comment'
 ]
 
 MIDDLEWARE = [

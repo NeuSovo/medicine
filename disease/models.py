@@ -107,7 +107,7 @@ class DiseaseTypingSymptoms(models.Model):
 
     def __str__(self):
         """Unicode representation of DiseaseTypingSymptoms."""
-        pass
+        return self.symptoms_name
 
     symptoms_name = models.CharField(verbose_name='分型症状名字', max_length=30)
     symptoms_typing = models.ForeignKey(DiseaseTyping, on_delete=models.CASCADE, verbose_name='分型')
