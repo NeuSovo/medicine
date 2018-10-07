@@ -46,6 +46,7 @@ class Prescription(models.Model):
     # TODO: prescription satisfaction
 
     prescription = models.CharField(verbose_name='药方', max_length=50, unique=True)
+    image = models.ImageField(upload_to='gif', default='none')
 
 
 class Disease(models.Model):
@@ -78,8 +79,8 @@ class Disease(models.Model):
 
         return len(matched) / len(this_disease_symtoms)
 
-class DiseaseTypingSymptoms(models.Model):
 
+class DiseaseTypingSymptoms(models.Model):
     class Meta:
         """分型的主要症状"""
 
@@ -126,8 +127,8 @@ class Case(models.Model):
         return str(self.case_id)
 
     def gen_case_id(self):
-        return timezone.now().strftime("%Y%m%d") + str(round(time.time() * 1000)) [-4:] + \
-                str(random.randint(1000,9999))
+        return timezone.now().strftime("%Y%m%d") + str(round(time.time() * 1000))[-4:] + \
+               str(random.randint(1000, 9999))
 
     def save(self, *args, **kwargs):
         if not self.case_id:
@@ -142,7 +143,7 @@ class Case(models.Model):
                 for i in symptoms:
                     case.casesymptoms_set.create(symptoms_id=i)
         except Exception as e:
-            print (str(e) + ' line 145')
+            print(str(e) + ' line 145')
             return str(e)
 
         return case
@@ -163,10 +164,13 @@ class Case(models.Model):
     def get_result(self):
         info = dict()
         # 主方/
-        info['main_prescription'] = [i.prescription for i in self.case_disease.main_prescription.all()]
+        info['main_prescription'] = [{'name': i.prescription, 'image': i.image.url}
+                                     for i in self.case_disease.main_prescription.all()]
         # 
-        info['typings'] = [{'typing_name': i.typing.type_name, 'prescription': [j.prescription
-                            for j in i.typing.add_prescription.all()]} for i in self.casetyping_set.all()]
+        info['typings'] = [{'typing_name': i.typing.type_name,
+                            'prescription': [{'name': j.prescription, 'image': j.image.url}
+                                             for j in i.typing.add_prescription.all()]} for i in
+                           self.casetyping_set.all()]
 
         return info
 
@@ -213,7 +217,6 @@ class CaseTyping(models.Model):
 
 
 class FavList(models.Model):
-
     class Meta:
         verbose_name = "FavList"
         verbose_name_plural = "FavList"
