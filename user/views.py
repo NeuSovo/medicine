@@ -37,7 +37,6 @@ class LoginUserView(JsonResponseMixin, View):
         return self.render_to_response({'msg': 'success', 'user_obj': request.wuser})
 
 
-
 class UserCaseListView(MultipleJsonResponseMixin, ListView):
     model = Case
     paginate_by = 15
@@ -74,6 +73,7 @@ class UserFavListView(MultipleJsonResponseMixin, ListView):
     paginate_by = 15
     foreign = True
     datetime_format = 'string'
+    exclude_attr = ('fa_user',)
 
     def get_queryset(self):
         queryset = super(UserFavListView, self).get_queryset()

@@ -108,8 +108,15 @@ class DoFavView(JsonResponseMixin, View):
     def post(self, request, *args, **kwargs):
         case = get_object_or_404(Case, pk=kwargs.get('case_id'))
         try:
-            self.model.objects.create(fa_case=case, fa_user=request.wuser)
-        except Exception as e:
-            return self.render_to_response({'msg': 'error'})
+            qr = self.model.objects.filter(fa_case=case, fa_user=request.wuser)
+            if qr.exists():
+                qr.delete()
+                status = -1 # un dofav
+            else:
 
-        return self.render_to_response({'msg': 'ok'})
+                self.model.objects.create(fa_case=case, fa_user=request.wuser)
+                status = 0  # dofav
+        except Exception as e:
+            return self.render_to_response({'msg': str(e)})
+
+        return self.render_to_response({'msg': 'ok', 'status': status})
