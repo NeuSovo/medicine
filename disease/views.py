@@ -104,8 +104,9 @@ class DiseaseResultView(JsonResponseMixin, View):
 class DoFavView(JsonResponseMixin, View):
     model = FavList
 
+    @login_required
     def post(self, request, *args, **kwargs):
-        case = get_object_or_404(self.model, pk=kwargs.get('case_id'))
+        case = get_object_or_404(Case, pk=kwargs.get('case_id'))
         try:
             self.model.objects.create(fa_case=case, fa_user=request.wuser)
         except Exception as e:

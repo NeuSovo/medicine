@@ -142,7 +142,7 @@ class Case(models.Model):
                 for i in symptoms:
                     case.casesymptoms_set.create(symptoms_id=i)
         except Exception as e:
-            print (str(e) + ' line 130')
+            print (str(e) + ' line 145')
             return str(e)
 
         return case
@@ -157,7 +157,7 @@ class Case(models.Model):
                     if i.typing_symptoms.filter(id__in=typings).exists():
                         self.casetyping_set.create(typing=i)
         except Exception as e:
-            print(str(e) + ' line 142')
+            print(str(e) + ' line 160')
             return str(e)
 
     def get_result(self):
