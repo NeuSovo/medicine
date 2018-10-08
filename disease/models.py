@@ -74,10 +74,17 @@ class Disease(models.Model):
         this_disease_symtoms = list(map(lambda x: x.id, self.main_symptoms.all()))
 
         matched = list(set(submitted) & set(this_disease_symtoms))
+        unmatched = [i for i in submitted if i not in this_disease_symtoms]
         # print logs
         print(this_disease_symtoms, submitted, matched)
 
-        return len(matched) / len(this_disease_symtoms)
+        compat = len(matched) / len(this_disease_symtoms)
+        print (compat)
+        if len(unmatched) != 0:
+            compat = compat / len(unmatched)
+            print(compat)
+
+        return compat
 
 
 class DiseaseTypingSymptoms(models.Model):
