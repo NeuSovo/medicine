@@ -41,7 +41,7 @@ class CommentView(JsonResponseMixin, View):
         try:
             self.model.objects.create(topic=disease, content=content, from_user=request.wuser, to_user=to_user)
         except Exception as e:
-            print(e)
+            raise e
             return self.render_to_response({'msg': str(e)})
 
         return self.render_to_response({'msg': 'ok'})

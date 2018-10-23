@@ -116,6 +116,7 @@ class DoFavView(JsonResponseMixin, View):
                 self.model.objects.create(fa_case=case, fa_user=request.wuser)
                 status = 0  # dofav
         except Exception as e:
+            raise e
             return self.render_to_response({'msg': str(e)})
 
         return self.render_to_response({'msg': 'ok', 'status': status})
