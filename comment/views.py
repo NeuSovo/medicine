@@ -33,7 +33,6 @@ class CommentView(JsonResponseMixin, View):
             try:
                 to_user = User.objects.get(pk=body.get('to_user_id', 0))
             except Exception as e:
-                raise e
                 return self.render_to_response({'msg': 'user_id not found'})
             # to_user = get_object_or_404(User, pk=body.get('to_user_id', 0))
 
