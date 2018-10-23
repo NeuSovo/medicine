@@ -73,7 +73,7 @@ class UserFavListView(MultipleJsonResponseMixin, ListView):
     paginate_by = 15
     foreign = True
     datetime_format = 'string'
-    exclude_attr = ('fa_user',)
+    exclude_attr = ('fa_user','openid', 'reg_date', 'last_login')
 
     def get_queryset(self):
         queryset = super(UserFavListView, self).get_queryset()

@@ -78,13 +78,13 @@ class Disease(models.Model):
         # print logs
         print(this_disease_symtoms, submitted, matched)
 
-        compat = len(matched) / len(this_disease_symtoms)
-        print (compat)
+        compatibility = len(matched) / len(this_disease_symtoms)
+        print (compatibility)
         if len(unmatched) != 0:
-            compat = compat / len(unmatched)
-            print(compat)
+            compatibility = compatibility / len(unmatched)
+            print(compatibility)
 
-        return compat
+        return compatibility
 
 
 class DiseaseTypingSymptoms(models.Model):

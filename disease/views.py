@@ -113,7 +113,6 @@ class DoFavView(JsonResponseMixin, View):
                 qr.delete()
                 status = -1 # un dofav
             else:
-
                 self.model.objects.create(fa_case=case, fa_user=request.wuser)
                 status = 0  # dofav
         except Exception as e:
