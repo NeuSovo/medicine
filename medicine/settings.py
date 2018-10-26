@@ -11,6 +11,17 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import raven
+import ssl
+
+ssl._create_default_https_context = ssl._create_unverified_context
+
+RAVEN_CONFIG = {
+    'dsn': 'http://ced499eddc024f3ea41026b2421f9ebd:73d4c0fb3fdd49238d362d9e8b6a301c@sentry.zzde.me//3',
+    # If you are using git, you can also automatically configure the
+    # release based on the git info.
+    #'release': raven.fetch_git_sha(os.path.abspath(os.pardir)),
+}
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -40,7 +51,8 @@ INSTALLED_APPS = [
 
     'disease',
     'user',
-    'comment'
+    'comment',
+    'raven.contrib.django.raven_compat'
 ]
 
 MIDDLEWARE = [
