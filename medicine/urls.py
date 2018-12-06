@@ -20,5 +20,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('disease/', include('disease.urls')),
     path('user/', include('user.urls')),
-    path('disease/comment/', include('comment.urls'))
+    path('disease/comment/', include('comment.urls')),
+    path('index/', include('index.urls')),
+
+    path('simditor/', include('simditor.urls')),
 ]
