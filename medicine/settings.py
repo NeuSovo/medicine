@@ -38,9 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'simditor',
+
     'disease',
     'user',
-    'comment'
+    'comment',
+    'index'
 ]
 
 MIDDLEWARE = [
@@ -124,7 +127,28 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR + '/static'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
+
+SIMDITOR_UPLOAD_PATH = 'uploads/'
+SIMDITOR_IMAGE_BACKEND = 'pillow'
+
+SIMDITOR_TOOLBAR = [
+    'title', 'bold', 'italic', 'underline', 'strikethrough', 'fontScale', 'color', '|',
+    'ol', 'ul', 'blockquote', '|',
+    'link', 'image', 'hr', '|',
+    'indent', 'outdent', 'alignment', 'fullscreen',
+]
+
+SIMDITOR_CONFIGS = {
+    'toolbar': SIMDITOR_TOOLBAR,
+    'upload': {
+        'url': '/simditor/upload/',
+        'fileKey': 'upload'
+    },
+    'emoji': {
+        'imagePath': '/static/simditor/images/emoji/'
+    },
+    'is_api': True,
+}
