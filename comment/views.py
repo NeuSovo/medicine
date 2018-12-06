@@ -30,14 +30,18 @@ class CommentView(JsonResponseMixin, View):
 
         to_user = None
         if body.get('is_reply'):
-            to_user = get_object_or_404(User, pk=body.get('to_user_id', 0))
+            try:
+                to_user = User.objects.get(pk=body.get('to_user_id', 0))
+            except Exception as e:
+                return self.render_to_response({'msg': 'user_id not found'})
+            # to_user = get_object_or_404(User, pk=body.get('to_user_id', 0))
 
         # TODO: to detail this content
         content = body.get('content')
         try:
             self.model.objects.create(topic=disease, content=content, from_user=request.wuser, to_user=to_user)
         except Exception as e:
-            print(e)
+            raise e
             return self.render_to_response({'msg': str(e)})
 
         return self.render_to_response({'msg': 'ok'})
