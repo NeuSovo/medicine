@@ -9,8 +9,8 @@ from .tools import *
 
 
 class WechatSdk:
-    APPID = ''
-    SECRET = ''
+    APPID = 'wx7bf7a3eab71e5841'
+    SECRET = '38d74459e0e537223f4aed3094c723d9'
 
     def __init__(self, code):
         super(WechatSdk, self).__init__()
