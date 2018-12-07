@@ -5,6 +5,7 @@ from .models import *
 from .auth import UserWrap, login_required
 
 from disease.models import Case, FavList
+from comment.models import Comment
 
 
 class RegUserView(JsonResponseMixin, CreateView, UserWrap):
@@ -79,5 +80,19 @@ class UserFavListView(MultipleJsonResponseMixin, ListView):
         queryset = super(UserFavListView, self).get_queryset()
 
         qr = queryset.filter(fa_user=self.request.wuser)
+
+        return qr
+
+
+class UserCommentView(MultipleJsonResponseMixin, ListView):
+    model = Comment
+    datetime_format = 'string'
+    exclude_attr = ('reg_date', 'last_login', 'from_user')
+    paginate_by = 15
+
+    def get_queryset(self):
+        queryset = super(UserCommentView, self).get_queryset()
+
+        qr = queryset.filter(from_user=self.request.wuser)
 
         return qr

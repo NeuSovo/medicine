@@ -179,6 +179,8 @@ class Case(models.Model):
                                              for j in i.typing.add_prescription.all()]} for i in
                            self.casetyping_set.all()]
 
+        info['is_fav'] = self.create_user.favlist_set.filter().exists()
+
         return info
 
     case_id = models.BigIntegerField(primary_key=True)

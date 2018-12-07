@@ -9,5 +9,6 @@ urlpatterns = [
 
     path('case', UserCaseListView.as_view()),
     path('case/<str:case_id>', UserCaseDetailView.as_view()),
-    path('favlist', UserFavListView.as_view())
+    path('favlist', UserFavListView.as_view()),
+    path('comment', UserCommentView.as_view())
 ]
