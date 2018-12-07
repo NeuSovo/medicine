@@ -13,10 +13,11 @@ class Comment(models.Model):
 
         verbose_name = 'Comment'
         verbose_name_plural = 'Comments'
+        ordering = ['comment_time']
 
     def __str__(self):
         """Unicode representation of Comment."""
-        pass
+        return self.content[:10]
     
     topic = models.ForeignKey(Disease, on_delete=models.CASCADE)
     content = models.TextField()
