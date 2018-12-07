@@ -2,7 +2,7 @@ import json
 from user.auth import login_required
 
 from django.shortcuts import get_object_or_404
-from django.views.generic import CreateView, ListView, View
+from django.views.generic import CreateView, ListView, View, DetailView
 from dss.Mixin import JsonResponseMixin
 from dss.Serializer import serializer
 
@@ -61,7 +61,7 @@ class DiseaseSubmit(JsonResponseMixin, View):
                 max_disease = i
                 max_matched = matched
 
-        case = self.model.create(  
+        case = self.model.create(
             create_user=request.wuser, case_disease=max_disease, symptoms=symptoms)
 
         if not isinstance(case, self.model):
@@ -101,19 +101,37 @@ class DiseaseResultView(JsonResponseMixin, View):
         return self.render_to_response({'case': case, 'result': result})
 
 
+class DiseaseDetailView(JsonResponseMixin, DetailView):
+    model = Disease
+    foreign = True
+    many = True
+    pk_url_kwarg = 'disease_id'
+
+    def get_context_data(self, **kwargs):
+        context = super(DiseaseDetailView, self).get_context_data(**kwargs)
+        context['casetyping'] = [{
+            'type_name': i.type_name,
+            'add_prescription': i.add_prescription,
+            'typing_symptoms': i.typing_symptoms
+        } for i in self.object.diseasetyping_set.all()]
+        return context
+    
+    
 class DoFavView(JsonResponseMixin, View):
     model = FavList
 
     @login_required
     def post(self, request, *args, **kwargs):
-        case = get_object_or_404(Case, pk=kwargs.get('case_id'))
+        dise = get_object_or_404(Disease, pk=kwargs.get('disease_id'))
         try:
-            qr = self.model.objects.filter(fa_case=case, fa_user=request.wuser)
+            qr = self.model.objects.filter(
+                fa_disease=dise, fa_user=request.wuser)
             if qr.exists():
                 qr.delete()
-                status = -1 # un dofav
+                status = -1  # un dofav
             else:
-                self.model.objects.create(fa_case=case, fa_user=request.wuser)
+                self.model.objects.create(
+                    fa_disease=dise, fa_user=request.wuser)
                 status = 0  # dofav
         except Exception as e:
             raise e

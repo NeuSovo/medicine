@@ -7,8 +7,9 @@ from .models import *
 class DiseaseAdmin(admin.ModelAdmin):
     '''Admin View for '''
 
-    list_display = ('id', 'disease_name',)
+    list_display = ('id', 'disease_name', 'category')
     filter_horizontal = ('main_symptoms', 'main_prescription')
+    list_filter = ('category',)
     ordering = ('id',)
 
 
@@ -41,3 +42,4 @@ class CaseAdmin(admin.ModelAdmin):
 admin.site.register(Symptoms)
 admin.site.register(DiseaseTypingSymptoms)
 admin.site.register(Prescription)
+admin.site.register(Category)

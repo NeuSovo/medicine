@@ -49,6 +49,17 @@ class Prescription(models.Model):
     image = models.ImageField(upload_to='gif', default='none')
 
 
+class Category(models.Model):
+    class Meta:
+        verbose_name = 'Category'
+        verbose_name_plural = 'Categorys'
+
+    def __str__(self):
+        return self.category_name
+
+    category_name = models.CharField(max_length=255)
+
+
 class Disease(models.Model):
     """Model definition for Disease."""
 
@@ -65,6 +76,8 @@ class Disease(models.Model):
     disease_name = models.CharField(verbose_name="疾病名称", max_length=50)
     main_symptoms = models.ManyToManyField(Symptoms, verbose_name='主要症状')
     main_prescription = models.ManyToManyField(Prescription, verbose_name='主药方', blank=True)
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, verbose_name="分类")
+    tips = models.TextField(null=True, verbose_name="小提示", blank=True)
 
     def get_compatibility(self, submitted):
         """
@@ -179,7 +192,7 @@ class Case(models.Model):
                                              for j in i.typing.add_prescription.all()]} for i in
                            self.casetyping_set.all()]
 
-        info['is_fav'] = self.create_user.favlist_set.filter().exists()
+        info['is_fav'] = self.create_user.favlist_set.filter(fa_disease=self.case_disease).exists()
 
         return info
 
@@ -230,5 +243,5 @@ class FavList(models.Model):
         verbose_name = "FavList"
         verbose_name_plural = "FavList"
 
-    fa_case = models.ForeignKey(Case, on_delete=models.CASCADE)
+    fa_disease = models.ForeignKey(Disease, on_delete=models.CASCADE)
     fa_user = models.ForeignKey(User, on_delete=models.CASCADE)
