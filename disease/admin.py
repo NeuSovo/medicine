@@ -17,9 +17,10 @@ class DiseaseAdmin(admin.ModelAdmin):
 class DiseaseTypeAdmin(admin.ModelAdmin):
     '''Admin View for DiseaseType'''
 
-    list_display = ('disease' ,'type_name',)
-
+    list_display = ('disease', 'type_name',)
     filter_horizontal = ('typing_symptoms', 'add_prescription',)
+    list_filter = ('disease',)
+
 
 @admin.register(Case)
 class CaseAdmin(admin.ModelAdmin):
