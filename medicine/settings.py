@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     'user',
     'comment',
     'raven.contrib.django.raven_compat',
-    'index'
+    'index',
     'neijing'
 ]
 
