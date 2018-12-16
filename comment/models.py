@@ -3,9 +3,9 @@ from disease.models import Disease
 from user.models import User
 # Create your models here.
 
+
 class Comment(models.Model):
     """Model definition for Comment."""
-
     # TODO: Define fields here
 
     class Meta:

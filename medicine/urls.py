@@ -22,6 +22,7 @@ urlpatterns = [
     path('user/', include('user.urls')),
     path('disease/comment/', include('comment.urls')),
     path('index/', include('index.urls')),
+    path('nj/', include("neijing.urls")),
 
     path('simditor/', include('simditor.urls')),
 ]
