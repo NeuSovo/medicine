@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     'disease',
     'user',
     'comment',
-    'raven.contrib.django.raven_compat'
+    'raven.contrib.django.raven_compat',
     'index'
 ]
 
