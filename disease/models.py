@@ -20,6 +20,7 @@ class Symptoms(models.Model):
 
         verbose_name = '主症'
         verbose_name_plural = '主症'
+        ordering = ['-count']
 
     def __str__(self):
         """Unicode representation of Symptoms."""
@@ -28,6 +29,7 @@ class Symptoms(models.Model):
     # TODO: check logs and refresh weight
 
     symptoms = models.CharField(verbose_name="症状", max_length=50, unique=True)
+    count = models.IntegerField(default=0)
 
 
 class Prescription(models.Model):
@@ -161,6 +163,7 @@ class Case(models.Model):
             with transaction.atomic():
                 case = Case.objects.create(create_user=create_user, case_disease=case_disease)
                 for i in symptoms:
+                    i.count += 1
                     case.casesymptoms_set.create(symptoms_id=i)
         except Exception as e:
             raise e

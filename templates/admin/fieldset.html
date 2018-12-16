@@ -1,0 +1,78 @@
+<style type="text/css">
+
+    .span_ensure {
+        font-size: 15px
+    }
+    .span_ensure:hover {
+        text-decoration: underline;
+    }
+    .answer_check{
+        text-decoration: underline;
+        text-decoration-color: red;
+        background: red;
+    }
+
+</style>
+<fieldset class="module aligned {{ fieldset.classes }}">
+    {% if fieldset.name %}<h2>{{ fieldset.name }}</h2>{% endif %}
+    {% if fieldset.description %}
+        <div class="description">{{ fieldset.description|safe }}</div>
+    {% endif %}
+    {% for line in fieldset %}
+        <div class="form-row{% if line.fields|length_is:'1' and line.errors %} errors{% endif %}{% if not line.has_visible_field %} hidden{% endif %}{% for field in line %}{% if field.field.name %} field-{{ field.field.name }}{% endif %}{% endfor %}">
+            {% if line.fields|length_is:'1' %}{{ line.errors }}{% endif %}
+            
+            {% for field in line %}
+                <div{% if not line.fields|length_is:'1' %} class="fieldBox{% if field.field.name %} field-{{ field.field.name }}{% endif %}{% if not field.is_readonly and field.errors %} errors{% endif %}{% if field.field.is_hidden %} hidden{% endif %}"{% elif field.is_checkbox %} class="checkbox-row"{% endif %}>
+                    {% if not line.fields|length_is:'1' and not field.is_readonly %}{{ field.errors }}{% endif %}
+                    {% if field.is_checkbox %}
+                        {{ field.field }}{{ field.label_tag }}
+                    {% else %}
+                        {{ field.label_tag }}
+                        {% if field.is_readonly %}
+                            <div class="readonly">
+                            {% ifequal field.field.name 'content' %}
+                                {% for a in inline_admin_form.original.as_list %}
+                                    {% if a.match %}
+                                        <span class="span_ensure answer_check" id="answer_{{inline_admin_form.original.id}}_{{ forloop.counter}}" onclick="setAnswer({{inline_admin_form.original.id}}, {{ forloop.counter}}, event)"> {{ a.content }}</span>
+                                    {% else %}
+                                        <span class="span_ensure" id="answer_{{inline_admin_form.original.id}}_{{ forloop.counter}}" onclick="setAnswer({{inline_admin_form.original.id}}, {{ forloop.counter}}, event)"> {{ a.content }}</span>
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                {{ field.contents }}
+                            {% endifequal %}
+                            </div>
+                        {% else %}
+                            {{ field.field }}
+                        {% endif %}
+                    {% endif %}
+                    {% if field.field.help_text %}
+                        <div class="help">{{ field.field.help_text|safe }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+</fieldset>
+
+<script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+<script>
+    function setAnswer(pid, iid, e){
+        s = "#answer_"+ pid +'_'+ iid;
+        var _this = django.jQuery(s);
+        var url = '/nj/match/' + pid + '/' + iid
+
+        django.jQuery.get(
+            url,
+            function(data){
+                if (data.status){
+                    _this.addClass("answer_check")
+                }else{
+                    _this.removeClass("answer_check")
+                }
+            }
+
+        )
+    }
+</script>

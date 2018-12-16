@@ -24,6 +24,7 @@ urlpatterns = [
     path('user/', include('user.urls')),
     path('disease/comment/', include('comment.urls')),
     path('index/', include('index.urls')),
+    path('nj/', include("neijing.urls")),
 
     path('simditor/', include('simditor.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + \
