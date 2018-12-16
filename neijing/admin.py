@@ -5,7 +5,6 @@ import re
 from .models import *
 from django.db import transaction
 
-
 class NeiJIngBlankInline(admin.StackedInline):
     model = NeiJingParaGraph
     can_delete = False
@@ -65,4 +64,6 @@ class NeiJingRawAdmin(admin.ModelAdmin):
         else:
             self.inlines = [NeiJIngBlankInline]
         return super(NeiJingRawAdmin, self).get_inline_instances(request, obj)
+
+admin.site.register(NeiJingExam)
 

@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
-from dss.Mixin import JsonResponseMixin
-from django.views.generic import View
+from dss.Mixin import JsonResponseMixin, MultipleJsonResponseMixin
+from django.views.generic import View, ListView
 from .models import *
 import random
 import json
@@ -44,10 +44,17 @@ class ExamView(JsonResponseMixin, View):
         except Exception as e:
             return self.render_to_response({'msg': 'error'})
 
-        right_answers = eval(exam.right_answers)
         exam.u_answers = body
         exam.save()
-        for i, j in zip(right_answers, body):
-            print (i== j)
-        return self.render_to_response(right_answers)
-        
+        res = exam.get_res()
+
+        return self.render_to_response({'msg': 'ok',
+        'total_blank_count': len(exam.u_answers),
+        'right_answer_count': exam.right_answer_count, 'res':res})
+
+
+class NeiJingList(MultipleJsonResponseMixin, ListView):
+    model = NeiJingRaw
+    paginate_by = 20
+    datetime_type = 'string'
+    exclude_attr = ('raw',)

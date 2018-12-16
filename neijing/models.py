@@ -101,6 +101,38 @@ class NeiJingExam(models.Model):
     begin_time = models.DateTimeField(verbose_name='开始时间', auto_now=False, auto_now_add=True)
     exam_raw = models.ForeignKey(NeiJingRaw, on_delete=models.CASCADE)
     blanks = models.CharField(max_length=250, default='')
-    right_answers = models.CharField(max_length=250, default='')
+    right_answer_count = models.IntegerField(default=0)
     u_answers = models.CharField(max_length=250, default='')
 
+    def get_res(self):
+        u_answers = self.u_answers
+        print (type(self.u_answers))
+        blanks = eval(self.blanks)
+        # blank
+        count = 0
+        right_answer_count = 0
+        res = []
+        for i in self.exam_raw.paragraph.all():
+            content = []
+            for idx,val in enumerate(eval(i.content)):
+                if str(i.id)+'-'+str(idx) in blanks:
+                    content.append({
+                        'text': '____',
+                        'is_blank': True,
+                        'answer': val,
+                        'u_answer': u_answers[count],
+                        'is_right': val == u_answers[count]
+                    })
+                    if val == u_answers[count]:
+                        right_answer_count += 1
+                    count += 1
+                else:
+                    content.append({
+                        'text': val,
+                        'is_blank': False
+                    })
+            res.append(content)
+        self.right_answer_count = right_answer_count
+        self.save()
+        return res
+        
