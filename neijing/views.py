@@ -37,7 +37,7 @@ class ExamView(JsonResponseMixin, View):
         exam_b, blanks= exam_raw.get_all_blank_count()
         exam = NeiJingExam(exam_raw=exam_raw, create_user=request.wuser, blanks=blanks)
         exam.save()
-        return self.render_to_response({'msg': 'ok', 'exam_id': exam.id, 'begin_time': exam.begin_time, 'raw': exam_b})
+        return self.render_to_response({'msg': 'ok', 'exam_id': exam.id, 'total_blank': len(blanks), 'begin_time': exam.begin_time, 'raw': exam_b})
 
     @login_required
     def post(self, request, *args, **kwargs):

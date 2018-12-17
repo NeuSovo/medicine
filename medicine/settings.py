@@ -17,7 +17,7 @@ import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 
 RAVEN_CONFIG = {
-    'dsn': 'http://ced499eddc024f3ea41026b2421f9ebd:73d4c0fb3fdd49238d362d9e8b6a301c@sentry.zzde.me//3',
+    'dsn': 'https://77f0f371026446dd845351f62ee17233@sentry.io/1355208',
     # If you are using git, you can also automatically configure the
     # release based on the git info.
     #'release': raven.fetch_git_sha(os.path.abspath(os.pardir)),

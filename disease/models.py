@@ -20,7 +20,7 @@ class Symptoms(models.Model):
 
         verbose_name = '主症'
         verbose_name_plural = '主症'
-        ordering = ['-count']
+        # ordering = ['-count']
 
     def __str__(self):
         """Unicode representation of Symptoms."""
@@ -91,13 +91,13 @@ class Disease(models.Model):
         matched = list(set(submitted) & set(this_disease_symtoms))
         unmatched = [i for i in submitted if i not in this_disease_symtoms]
         # print logs
-        print(this_disease_symtoms, submitted, matched)
+        # print(this_disease_symtoms, submitted, matched)
 
         compatibility = len(matched) / len(this_disease_symtoms)
-        print (compatibility)
+        # print (compatibility)
         if len(unmatched) != 0:
             compatibility = compatibility / len(unmatched)
-            print(compatibility)
+            # print(compatibility)
 
         return compatibility
 
@@ -162,9 +162,11 @@ class Case(models.Model):
         try:
             with transaction.atomic():
                 case = Case.objects.create(create_user=create_user, case_disease=case_disease)
-                for i in symptoms:
+                sysmtoms_obj = Symptoms.objects.filter(id__in=symptoms)
+                for i in sysmtoms_obj:
                     i.count += 1
-                    case.casesymptoms_set.create(symptoms_id=i)
+                    case.casesymptoms_set.create(symptoms_id=i.id)
+                    i.save()
         except Exception as e:
             raise e
             return str(e)

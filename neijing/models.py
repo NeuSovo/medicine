@@ -36,20 +36,23 @@ class NeiJingRaw(models.Model):
             count = count
         else:
             count = self.blank_count
-        blanks = sorted(random.sample(blanks, count), key=lambda x: int(x.split('-')[0]))
+        blanks = sorted(random.sample(blanks, count),
+                        key=lambda x: int(x.split('-')[0]))
         exam_b = NeiJingRaw.get_exam_b(paragraph, blanks, all_answers)
         return exam_b, blanks
-
 
     @staticmethod
     def get_exam_b(paragraphs, blanks, all_answers):
         exam_b = []
+
         def get_options(val):
             count = 3
             res = []
+            if count > len(all_answers):
+                count = len(all_answers) - 1
             while count:
                 a = random.choice(all_answers)
-                if a!=val:
+                if a != val and a not in res:
                     res.append(a)
                     count -= 1
             res.append(val)
@@ -57,7 +60,7 @@ class NeiJingRaw(models.Model):
             return res
         for i in paragraphs:
             content = []
-            for idx,val in enumerate(eval(i.content)):
+            for idx, val in enumerate(eval(i.content)):
                 if str(i.id)+'-'+str(idx) in blanks:
                     content.append({
                         'text': '____',
@@ -80,24 +83,27 @@ class NeiJingParaGraph(models.Model):
         verbose_name = '段落'
         verbose_name_plural = '段落'
 
-    raw =  models.ForeignKey(NeiJingRaw, on_delete=models.CASCADE, related_name='paragraph')
-    content = models.TextField(verbose_name='内容', help_text='点击标记或取消标记，红色为填空内容')
+    raw = models.ForeignKey(
+        NeiJingRaw, on_delete=models.CASCADE, related_name='paragraph')
+    content = models.TextField(
+        verbose_name='内容', help_text='点击标记或取消标记，红色为填空内容')
     blank_index = models.CharField(max_length=255, default='')
 
     @property
     def as_list(self):
-        return [{'content': val, 'match': idx+1 in self.blanks} for idx,val in enumerate(eval(self.content))]
+        return [{'content': val, 'match': idx+1 in self.blanks} for idx, val in enumerate(eval(self.content))]
 
     @property
     def blanks(self):
         return sorted([
-            int(i) for i in self.blank_index.split(',') if i !=''
+            int(i) for i in self.blank_index.split(',') if i != ''
         ])
 
 
 class NeiJingExam(models.Model):
 
-    begin_time = models.DateTimeField(verbose_name='开始时间', auto_now=False, auto_now_add=True)
+    begin_time = models.DateTimeField(
+        verbose_name='开始时间', auto_now=False, auto_now_add=True)
     create_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     exam_raw = models.ForeignKey(NeiJingRaw, on_delete=models.CASCADE)
     blanks = models.CharField(max_length=250, default='')
@@ -113,7 +119,7 @@ class NeiJingExam(models.Model):
         res = []
         for i in self.exam_raw.paragraph.all():
             content = []
-            for idx,val in enumerate(eval(i.content)):
+            for idx, val in enumerate(eval(i.content)):
                 if str(i.id)+'-'+str(idx) in blanks:
                     content.append({
                         'text': '____',
@@ -134,4 +140,3 @@ class NeiJingExam(models.Model):
         self.right_answer_count = right_answer_count
         self.save()
         return res
-        
