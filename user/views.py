@@ -6,6 +6,7 @@ from .auth import UserWrap, login_required
 
 from disease.models import Case, FavList
 from comment.models import Comment
+from neijing.models import NeiJingExam
 
 
 class RegUserView(JsonResponseMixin, CreateView, UserWrap):
@@ -95,4 +96,16 @@ class UserCommentView(MultipleJsonResponseMixin, ListView):
 
         qr = queryset.filter(from_user=self.request.wuser)
 
+        return qr
+
+
+class UserExamView(MultipleJsonResponseMixin, ListView):
+    model = NeiJingExam
+    datetime_format = 'string'
+    exclude_attr = ('exam_raw_id', 'reg_date', 'openid', 'last_login', 'blanks', 'raw', 'u_answers', 'create_user_id')
+    paginate_by = 15
+
+    def get_queryset(self):
+        queryset = super(UserExamView, self).get_queryset()
+        qr = queryset.filter(create_user=self.request.wuser)
         return qr

@@ -1,5 +1,6 @@
 import random
 from django.db import models
+from user.models import User
 
 # Create your models here.
 
@@ -36,14 +37,13 @@ class NeiJingRaw(models.Model):
         else:
             count = self.blank_count
         blanks = sorted(random.sample(blanks, count), key=lambda x: int(x.split('-')[0]))
-        exam_a, exam_b = NeiJingRaw.get_exam_a_and_b(paragraph, blanks, all_answers)
-        return exam_a, exam_b, blanks
+        exam_b = NeiJingRaw.get_exam_b(paragraph, blanks, all_answers)
+        return exam_b, blanks
 
 
     @staticmethod
-    def get_exam_a_and_b(paragraphs, blanks, all_answers):
+    def get_exam_b(paragraphs, blanks, all_answers):
         exam_b = []
-        exam_a = []
         def get_options(val):
             count = 3
             res = []
@@ -65,14 +65,13 @@ class NeiJingRaw(models.Model):
                         'options': get_options(val),
                         'answer': val
                     })
-                    exam_a.append(val)
                 else:
                     content.append({
                         'text': val,
                         'is_blank': False
                     })
             exam_b.append(content)
-        return exam_a, exam_b
+        return exam_b
 
 
 class NeiJingParaGraph(models.Model):
@@ -99,14 +98,14 @@ class NeiJingParaGraph(models.Model):
 class NeiJingExam(models.Model):
 
     begin_time = models.DateTimeField(verbose_name='开始时间', auto_now=False, auto_now_add=True)
+    create_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     exam_raw = models.ForeignKey(NeiJingRaw, on_delete=models.CASCADE)
     blanks = models.CharField(max_length=250, default='')
     right_answer_count = models.IntegerField(default=0)
     u_answers = models.CharField(max_length=250, default='')
 
     def get_res(self):
-        u_answers = self.u_answers
-        print (type(self.u_answers))
+        u_answers = eval(str(self.u_answers))
         blanks = eval(self.blanks)
         # blank
         count = 0
