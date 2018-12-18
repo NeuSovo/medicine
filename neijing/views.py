@@ -69,8 +69,7 @@ class ExamDetailView(JsonResponseMixin, DetailView):
     foreign = False
     many = False
     pk_url_kwarg = 'pk'
-    exclude_attr = ('blanks', 'u_answers', 'right_answer_count', 'create_user_id', 'exam_raw_id')
-
+    exclude_attr = ('blanks', 'u_answers', 'create_user_id', 'exam_raw_id')
 
     def get_context_data(self, **kwargs):
         context = super(ExamDetailView, self).get_context_data(**kwargs)

@@ -107,5 +107,5 @@ class UserExamView(MultipleJsonResponseMixin, ListView):
 
     def get_queryset(self):
         queryset = super(UserExamView, self).get_queryset()
-        qr = queryset.filter(create_user=self.request.wuser)
+        qr = queryset.filter(create_user=self.request.wuser).exclude(u_answers__exact='')
         return qr

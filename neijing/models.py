@@ -79,7 +79,6 @@ class NeiJingRaw(models.Model):
 
 class NeiJingParaGraph(models.Model):
     class Meta:
-
         verbose_name = '段落'
         verbose_name_plural = '段落'
 
@@ -101,6 +100,10 @@ class NeiJingParaGraph(models.Model):
 
 
 class NeiJingExam(models.Model):
+    class Meta:
+        verbose_name = 'exam'
+        verbose_name_plural = 'exams'
+        ordering = ['-id']
 
     begin_time = models.DateTimeField(
         verbose_name='开始时间', auto_now=False, auto_now_add=True)
