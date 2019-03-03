@@ -1,5 +1,5 @@
 FROM alang/django
 ENV DJANGO_APP=medicine 
 COPY . /usr/django/app
-ENV DJANGO_MANAGEMENT_ON_START='collectstatic --noinput';'migrate --noinput'
+ENV DJANGO_MANAGEMENT_ON_START='collectstatic --noinput';'migrate --noinput';'loaddata info.json'
 RUN pip install -r /usr/django/app/requirements.txt

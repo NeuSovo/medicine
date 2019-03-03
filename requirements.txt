@@ -5,6 +5,5 @@ Pillow
 tenacity
 git+https://github.com/zxh326/django-simple-serializer.git
 raven
-uwsgi
 gevent
 django-simditor
