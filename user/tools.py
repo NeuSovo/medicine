@@ -1,7 +1,7 @@
 import random
 import time
 from hashlib import sha256
-
+import os
 import redis
 import requests
 from django.conf import settings
@@ -13,7 +13,7 @@ try:
 except NotImplementedError:
     using_sysrandom = False
 
-medicine_redis = redis.StrictRedis(host='redis_db', port=6379, db=0)
+medicine_redis = redis.StrictRedis(host=os.getenv('REDIS_HOST') or '127.0.0.1', port=os.getenv('REDIS_PORT') or 6379, db=0)
 TOKEN_EXPIRE_HOUR = 72
 
 
