@@ -7,3 +7,4 @@ git+https://github.com/zxh326/django-simple-serializer.git
 raven
 gevent
 django-simditor
+redis-py-cluster
