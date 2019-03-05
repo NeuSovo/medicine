@@ -12,7 +12,7 @@ try:
     using_sysrandom = True
 except NotImplementedError:
     using_sysrandom = False
-from from rediscluster import StrictRedisCluster
+from rediscluster import StrictRedisCluster
 
 startup_nodes = [{"host": os.getenv('REDIS_HOST'), "port": os.getenv('REDIS_PORT')}]
 # medicine_redis = redis.StrictRedis(host= or '127.0.0.1', port= or 6379, db=0)
