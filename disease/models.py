@@ -53,8 +53,8 @@ class Prescription(models.Model):
 
 class Category(models.Model):
     class Meta:
-        verbose_name = 'Category'
-        verbose_name_plural = 'Categorys'
+        verbose_name = '分类'
+        verbose_name_plural = '分类'
 
     def __str__(self):
         return self.category_name
@@ -141,8 +141,8 @@ class Case(models.Model):
     class Meta:
         """Meta definition for Case."""
 
-        verbose_name = 'Case'
-        verbose_name_plural = 'Cases'
+        verbose_name = '案例'
+        verbose_name_plural = '案例'
 
     def __str__(self):
         """Unicode representation of Case."""

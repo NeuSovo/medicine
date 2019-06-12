@@ -16,6 +16,7 @@ class LunBo(models.Model):
     
     title = models.CharField(verbose_name='标题', max_length=50, null=True, blank=True)
     img = models.ImageField(verbose_name='图片', default='img/demo.jpg', upload_to="img")
+    vurl = models.URLField(verbose_name='视频地址', null=True, blank=True)
 
 
 class Index(models.Model):

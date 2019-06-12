@@ -11,17 +11,11 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
-import raven
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 import ssl
 
 ssl._create_default_https_context = ssl._create_unverified_context
-
-RAVEN_CONFIG = {
-    'dsn': 'https://77f0f371026446dd845351f62ee17233@sentry.io/1355208',
-    # If you are using git, you can also automatically configure the
-    # release based on the git info.
-    #'release': raven.fetch_git_sha(os.path.abspath(os.pardir)),
-}
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -34,7 +28,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '%fg3e(_rd8x@-_*yhpn&1=2ex6b)*)88^dg#h6-4v#9wf@7cr)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('RELEASE') != 'true'
+if not DEBUG:
+    sentry_sdk.init(
+        dsn="https://77f0f371026446dd845351f62ee17233@sentry.io/1355208",
+        integrations=[DjangoIntegration()],
+        send_default_pii=True
+    )
+
 
 ALLOWED_HOSTS = ['*']
 
@@ -54,7 +55,6 @@ INSTALLED_APPS = [
     'disease',
     'user',
     'comment',
-    'raven.contrib.django.raven_compat',
     'index',
     'neijing'
 ]
@@ -95,12 +95,24 @@ WSGI_APPLICATION = 'medicine.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+if os.getenv('USE_MYSQL') == 'true':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'medicine',
+            'USER': 'medicine',
+            'PASSWORD': os.getenv('MYSQL_PASSWORD'),
+            'HOST': os.getenv('MYSQL_HOST'),
+            'PORT': os.getenv('MYSQL_PORT'),
+        }
     }
-}
+# else:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.sqlite3',
+#             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#         }
+#     }
 
 
 # Password validation

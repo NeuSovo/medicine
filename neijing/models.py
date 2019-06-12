@@ -11,8 +11,8 @@ class NeiJingRaw(models.Model):
     class Meta:
         """Meta definition for NeiJingRaw."""
 
-        verbose_name = 'NeiJingRaw'
-        verbose_name_plural = 'NeiJingRaws'
+        verbose_name = '内经原文'
+        verbose_name_plural = '内经原文'
 
     def __str__(self):
         """Unicode representation of NeiJingRaw."""
@@ -101,8 +101,8 @@ class NeiJingParaGraph(models.Model):
 
 class NeiJingExam(models.Model):
     class Meta:
-        verbose_name = 'exam'
-        verbose_name_plural = 'exams'
+        verbose_name = '测试'
+        verbose_name_plural = '测试'
         ordering = ['-id']
 
     begin_time = models.DateTimeField(
