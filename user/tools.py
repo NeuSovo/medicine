@@ -12,9 +12,8 @@ try:
     using_sysrandom = True
 except NotImplementedError:
     using_sysrandom = False
-from rediscluster import StrictRedisCluster
 
-medicine_redis = redis.StrictRedis(host= or '127.0.0.1', port= or 6379, db=0)
+medicine_redis = redis.StrictRedis(host=os.getenv('REDIS_HOST') or '127.0.0.1', port=os.getenv('REDIS_PORT') or 6379, db=0)
 TOKEN_EXPIRE_HOUR = 72
 
 
